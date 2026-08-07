@@ -1,3 +1,4 @@
+import {Link} from "react-router-dom"
 function Categories() {
 
   const categories = [
@@ -29,27 +30,25 @@ function Categories() {
 
           {categories.map(category => (
 
-            <div
+            <Link
               key={category.name}
-              className="group cursor-pointer overflow-hidden"
+              to={`/catalogo?category=${category.name.toLowerCase()}`}
+              className="group cursor-pointer overflow-hidden block"
             >
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  className="h-[450px] w-full object-cover transition duration-500 group-hover:scale-105"
+                />
 
-              <img
-                src={category.image}
-                alt={category.name}
-                className="h-[450px] w-full object-cover transition duration-500 group-hover:scale-105"
-              />
+                <div className="mt-5 text-center">
 
-              <div className="mt-5 text-center">
+                  <h3 className="font-serif text-3xl">
+                    {category.name}
+                  </h3>
 
-                <h3 className="font-serif text-3xl">
-                  {category.name}
-                </h3>
-
-              </div>
-
-            </div>
-
+                </div>
+            </Link>
           ))}
 
         </div>

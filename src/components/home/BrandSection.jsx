@@ -1,4 +1,5 @@
 import brandStory from "../../data/brandStory";
+import {Link} from "react-router-dom"
 
 function BrandSection() {
   return (
@@ -13,12 +14,12 @@ function BrandSection() {
           }`}
         >
 
-          <div>
+          <div className="overflow-hidden rounded-sm group cursor-pointer">
 
             <img
               src={item.image}
               alt={item.title}
-              className="h-96 w-full object-cover"
+              className="h-96 w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
 
           </div>
@@ -33,9 +34,16 @@ function BrandSection() {
               {item.description}
             </p>
 
-            <button className="uppercase border-b border-black pb-1 tracking-widest">
+            <Link
+            to={item.ruta}
+            className= "uppercase border-b border-black pb-1 tracking-widest">
               {item.button}
-            </button>
+            </Link>
+{/* 
+
+            <button className="uppercase border-b border-black pb-1 tracking-widest">
+              
+            </button> */}
 
           </div>
 

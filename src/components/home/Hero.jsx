@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 function Hero() {
   return (
     <section
@@ -19,10 +20,13 @@ function Hero() {
         <p className="text-xl text-white/90 mb-10">
           Descubre fragancias corporales diseñadas para cautivar.
         </p>
-
-        <button className="bg-black text-white px-8 py-3 uppercase tracking-widest hover:bg-neutral-800 transition">
+        <Link 
+          to="/catalogo"
+          className="inline-block bg-black text-white px-8 py-3 uppercase tracking-widest hover:bg-neutral-800 transition"
+        >
           Descubrir Aromas
-        </button>
+        </Link>
+        
 
       </div>
     </section>

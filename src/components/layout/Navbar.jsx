@@ -1,9 +1,32 @@
 import { Link } from "react-router-dom";
 import { Menu, ShoppingBag } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleContactClick = (e) => {
+      e.preventDefault();
+
+      const footer = document.getElementById("contacto");
+
+      if (footer) {
+        // Si el footer ya está presente en el DOM actual
+        footer.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // Si el usuario está en una página donde no carga el footer (o viene de otra ruta)
+        navigate("/#contacto");
+        setTimeout(() => {
+          const targetFooter = document.getElementById("contacto");
+          if (targetFooter) {
+            targetFooter.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
+    };
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-[#ebe5dc] bg-[#faf8f5]/90 backdrop-blur">
+    <header className="fixed top-0 z-50 w-full border-b border-[#ebe5dc] bg-[#EFE8E1]/90 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
 
         {/* Menú Desktop */}
@@ -24,17 +47,17 @@ function Navbar() {
 
           <Link
             className="text-sm font-medium tracking-wide text-[#2d2d2d] transition-colors hover:text-[#b78a65]"
-            to="#"
+            to="/nosotros"
           >
             Nosotros
           </Link>
-
-          <Link
+          <a
+            href="#contacto"
+            onClick={handleContactClick}
             className="text-sm font-medium tracking-wide text-[#2d2d2d] transition-colors hover:text-[#b78a65]"
-            to="#"
           >
             Contacto
-          </Link>
+          </a>
         </nav>
 
         {/* Logo */}

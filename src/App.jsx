@@ -7,7 +7,8 @@ import Catalog from "./pages/Catalog";
 import Product from "./pages/Product";
 import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
-
+import AboutUs from "./pages/AboutUs";
+import Terms from "./pages/Terms";
 function App() {
   return (
     <BrowserRouter>
@@ -25,6 +26,9 @@ function App() {
 
           <Route path="/admin" element={<Admin />} />
 
+          <Route path="/nosotros" element={<AboutUs />} />
+
+          <Route path="/terminos" element={<Terms />} />
         </Route>
 
       </Routes>
