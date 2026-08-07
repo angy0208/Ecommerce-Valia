@@ -32,7 +32,7 @@ function Cart() {
     });
     message += `%0ATotal: $${total}`;
 
-    window.open(`https://wa.me/584120000000?text=${message}`, "_blank");
+    window.open(`https://wa.me/584241127242?text=${message}`, "_blank");
   }
 
   return (
