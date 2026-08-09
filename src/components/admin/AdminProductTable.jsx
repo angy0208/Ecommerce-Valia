@@ -34,8 +34,9 @@ function AdminProductTable() {
 
     // Si en tu store tienes updateProduct(id, updated) o saveProduct(updated):
     if (typeof updateProduct === "function") {
-      updateProduct(product.id, updated);
+      updateProduct(updated);
     }
+
     load();
   }
 
@@ -138,11 +139,10 @@ function AdminProductTable() {
                         min="0"
                         value={product.stock ?? 0}
                         onChange={(e) => handleStockChange(product, e.target.value)}
-                        className={`w-20 px-3 py-1.5 border rounded-lg text-sm font-medium outline-none transition-colors ${
-                          Number(product.stock) === 0
+                        className={`w-20 px-3 py-1.5 border rounded-lg text-sm font-medium outline-none transition-colors ${Number(product.stock) === 0
                             ? "border-[#ba1a1a] text-[#ba1a1a] bg-red-50"
                             : "border-[#d1c4bb] text-[#6e5b49] bg-white focus:border-[#6e5b49]"
-                        }`}
+                          }`}
                       />
                       <span className="text-xs text-[#7f756d]">uds</span>
                     </div>

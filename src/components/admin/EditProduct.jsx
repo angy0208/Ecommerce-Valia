@@ -16,8 +16,9 @@ function EditProduct({ product, close }) {
     e.preventDefault();
     const stockNum = Number(formData.stock);
 
-    updateProduct(product.id, {
+    updateProduct({
       ...formData,
+      id: product.id,
       price: Number(formData.price),
       stock: stockNum,
       available: stockNum > 0,
