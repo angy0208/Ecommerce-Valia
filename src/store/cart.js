@@ -1,5 +1,6 @@
 export function getCart() {
   return JSON.parse(localStorage.getItem("cart")) || [];
+
 }
 
 export function saveCart(cart) {
@@ -21,12 +22,14 @@ export function addToCart(product, quantity) {
   }
 
   saveCart(cart);
+  window.dispatchEvent(new Event("cartUpdated"));
 }
 
 export function removeFromCart(id) {
   const cart = getCart().filter(item => item.id !== id);
 
   saveCart(cart);
+  window.dispatchEvent(new Event("cartUpdated"));
 }
 
 export function updateQuantity(id, quantity) {
@@ -39,4 +42,5 @@ export function updateQuantity(id, quantity) {
   }
 
   saveCart(cart);
+  window.dispatchEvent(new Event("cartUpdated"));
 }

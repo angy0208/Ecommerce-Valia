@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCart, removeFromCart } from "../store/cart";
+import { getCart, removeFromCart, updateQuantity } from "../store/cart"; // Asegúrate de tener o exportar updateQuantity de tu store
 
 function Cart() {
   const [cart, setCart] = useState([]);
@@ -21,6 +21,37 @@ function Cart() {
   function deleteProduct(id) {
     removeFromCart(id);
     setCart(getCart());
+  }
+
+  // Función para aumentar la cantidad de un producto
+  function increaseQty(id, currentQty) {
+    const newQty = currentQty + 1;
+    if (typeof updateQuantity === "function") {
+      updateQuantity(id, newQty);
+    }
+    // Actualizar directamente el estado visual del carrito
+    setCart(prevCart =>
+      prevCart.map(item =>
+        item.id === id ? { ...item, quantity: newQty } : item
+      )
+    );
+  }
+
+  // Función para disminuir la cantidad de un producto
+  function decreaseQty(id, currentQty) {
+    if (currentQty <= 1) {
+      deleteProduct(id);
+      return;
+    }
+    const newQty = currentQty - 1;
+    if (typeof updateQuantity === "function") {
+      updateQuantity(id, newQty);
+    }
+    setCart(prevCart =>
+      prevCart.map(item =>
+        item.id === id ? { ...item, quantity: newQty } : item
+      )
+    );
   }
 
   function finalizarPedido() {
@@ -106,14 +137,21 @@ function Cart() {
                     </div>
 
                     <div className="flex justify-between items-end mt-4 sm:mt-0">
+                      {/* Controles de Cantidad con onClick activado */}
                       <div className="flex items-center border border-gray-300 rounded-full">
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-l-full transition-colors">
+                        <button
+                          onClick={() => decreaseQty(item.id, itemQty)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-l-full transition-colors font-medium"
+                        >
                           -
                         </button>
                         <span className="w-8 text-center text-sm font-medium">
                           {itemQty}
                         </span>
-                        <button className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-r-full transition-colors">
+                        <button
+                          onClick={() => increaseQty(item.id, itemQty)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-r-full transition-colors font-medium"
+                        >
                           +
                         </button>
                       </div>
@@ -129,6 +167,7 @@ function Cart() {
             })
           )}
         </div>
+
         <div className="lg:col-span-4 sticky top-28">
           <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm flex flex-col gap-4">
             <h2 className="text-xl font-serif text-[#1c1b1b] border-b border-gray-200 pb-3">

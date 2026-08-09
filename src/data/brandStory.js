@@ -4,8 +4,8 @@ const brandStory = [
     title: "Un Sello Inolvidable",
     description:
       "En VALÍA creamos body splashes que van más allá de un aroma superficial. Formulamos brumas sofisticadas con fijación prolongada que abrazan tu piel suavemente, convirtiendo tu perfume en tu firma personal.",
-    button: "Conoce el universo VALÍA",
-    ruta: "/",
+    button: "Explorar la colección",
+    ruta: "/catalogo",
     image: "/images/about/about1.jpg",
     reverse: true,
   },
@@ -14,8 +14,8 @@ const brandStory = [
     title: "Frescura Sensorial Diaria",
     description:
       "Diseñados para aplicarse generosamente tras la ducha o para renovar tu energía durante la jornada. Cada gota ofrece una experiencia refrescante, sutil y llena de elegancia.",
-    button: "Explorar la colección",
-    ruta: "/catalogo",
+    button: "Conoce el universo VALÍA",
+    ruta: "/nosotros",
     image: "/images/about/about2.jpg",
     reverse: false,
   },

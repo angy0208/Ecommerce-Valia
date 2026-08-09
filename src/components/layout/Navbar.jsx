@@ -1,11 +1,27 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, ShoppingBag } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { getCart } from "../../store/cart";
 
 function Navbar() {
   const location = useLocation();
     const navigate = useNavigate();
+    const [totalItems, setTotalItems] = useState(0);
 
+    const updateCartCount = () => {
+      const cart = getCart() || [];
+      const count = cart.reduce(
+        (sum, item) => sum + (Number(item.quantity) || 1),
+        0
+      );
+      setTotalItems(count);
+    };
+
+    useEffect(() => {
+      updateCartCount();
+      window.addEventListener("cartUpdated", updateCartCount);
+      return () => window.removeEventListener("cartUpdated", updateCartCount);
+    }, []);
     const handleContactClick = (e) => {
       e.preventDefault();
 
@@ -72,8 +88,14 @@ function Navbar() {
         {/* Iconos */}
         <div className="flex items-center gap-4">
 
-          <Link to="/carrito" className="rounded-full p-2 transition hover:bg-[#ebe5dc]">
+          <Link to="/carrito" className="relative rounded-full p-2 transition hover:bg-[#ebe5dc]">
             <ShoppingBag size={22} />
+            
+            {totalItems > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#b78a65] text-[10px] font-bold text-white shadow-sm">
+                {totalItems > 99 ? "99+" : totalItems}
+              </span>
+            )}
           </Link>
 
           <button className="rounded-full p-2 transition hover:bg-[#ebe5dc] md:hidden">

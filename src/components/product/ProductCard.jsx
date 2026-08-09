@@ -26,6 +26,21 @@ function ProductCard({ product }) {
         <p className="mt-3 text-lg font-medium">
           ${product.price}
         </p>
+        <p className={`text-sm mt-2 ${
+          product.available === false
+          ?"text-red-500"
+          :"text-green-600"
+          }`}>
+
+          {
+          product.available === false
+          ?
+          "Agotado"
+          :
+          "Disponible"
+          }
+
+</p>
       </div>
     </Link>
   );
