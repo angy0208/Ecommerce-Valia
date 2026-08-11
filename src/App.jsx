@@ -13,7 +13,7 @@ import Terms from "./pages/Terms";
 
 function App() {
   return (
-    <BrowserRouter basename="/Ecommerce-Valia">
+    <BrowserRouter >
       <ScrollToTop />
       <Routes>
         {/* Rutas de la Tienda (con Navbar y Footer) */}
