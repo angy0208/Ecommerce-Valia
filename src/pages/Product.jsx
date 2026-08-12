@@ -1,10 +1,11 @@
-import { useParams } from "react-router-dom";
+
 
 import products from "../data/products";
 
 import ProductGallery from "../components/product/ProductGallery";
 import ProductInfo from "../components/product/ProductInfo";
 import RelatedProducts from "../components/product/RelatedProducts";
+import { useParams } from "react-router-dom"
 
 function Product() {
 

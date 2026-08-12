@@ -2,17 +2,17 @@ import { useState } from "react";
 import { Upload } from "lucide-react";
 import { addProduct } from "../../store/products";
 
-const NOTES_OPTIONS = ["Floral", "Cítrico", "Amaderado", "Dulce", "Fresco"];
-
+const TAG_OPTIONS = ["Elegante", "Casual", "Moderno", "Premium", "Natural", "Minimalista", "Dulce", "Fresco", "Formal"];
 function ProductForm({ onSuccess }) {
   const [product, setProduct] = useState({
     name: "",
-    category: "Femenino",
+    category: "Perfumes",
+    gender: "Femenino",
     price: "",
     stock: "",
     image: "",
     description: "",
-    notes: [], // Lista de notas olfativas seleccionadas
+    tags: []
   });
 
   function handleChange(e) {
@@ -23,14 +23,16 @@ function ProductForm({ onSuccess }) {
   }
 
   // Manejar selección/deselección de notas olfativas
-  function handleNoteToggle(note) {
+  function handleTagToggle(note) {
     setProduct((prev) => {
-      const exists = prev.notes.includes(note);
+      const exists = prev.tags.includes(tag);
       return {
         ...prev,
-        notes: exists
-          ? prev.notes.filter((n) => n !== note)
-          : [...prev.notes, note],
+        tags: exists
+          ?
+          prev.tags.filter(t => t !== tag)
+          :
+          [...prev.tags, tag]
       };
     });
   }
@@ -45,11 +47,11 @@ function ProductForm({ onSuccess }) {
       price: Number(product.price),
       stock: stockNumber,
       // Si el stock es mayor a 0, está disponible automáticamente
-      available: stockNumber > 0, 
+      available: stockNumber > 0,
     });
 
     alert("Producto agregado correctamente.");
-    
+
     if (onSuccess) onSuccess();
   }
 
@@ -75,14 +77,43 @@ function ProductForm({ onSuccess }) {
             Género *
           </label>
           <select
+            name="gender"
+            value={product.gender}
+            onChange={handleChange}
+          >
+            <option value="Femenino">
+              Femenino
+            </option>
+            <option value="Masculino">
+              Masculino
+            </option>
+            <option value="Unisex">
+              Unisex
+            </option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+            Categoría *
+          </label>
+          <select
             name="category"
             value={product.category}
             onChange={handleChange}
-            className="w-full bg-white border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm focus:border-[#6e5b49] outline-none transition-colors"
+            className="w-full bg-white border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm"
           >
-            <option value="Femenino">Femenino</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Unisex">Unisex</option>
+            <option value="Perfumes">
+              Perfumes
+            </option>
+            <option value="Ropa">
+              Ropa
+            </option>
+            <option value="Accesorios">
+              Accesorios
+            </option>
+            <option value="Maquillaje">
+              Maquillaje
+            </option>
           </select>
         </div>
 
@@ -125,18 +156,17 @@ function ProductForm({ onSuccess }) {
           Notas Olfativas
         </label>
         <div className="flex flex-wrap gap-2">
-          {NOTES_OPTIONS.map((note) => {
-            const isSelected = product.notes.includes(note);
+          {TAG_OPTIONS.map((note) => {
+            const isSelected = product.tags.includes(note);
             return (
               <button
                 type="button"
                 key={note}
-                onClick={() => handleNoteToggle(note)}
-                className={`px-3 py-1.5 rounded-full text-xs transition-colors border ${
-                  isSelected
-                    ? "bg-[#6e5b49] text-white border-[#6e5b49]"
-                    : "bg-white text-[#4e453e] border-[#d1c4bb] hover:border-[#6e5b49]"
-                }`}
+                onClick={() => handleTagToggle(tag)}
+                className={`px-3 py-1.5 rounded-full text-xs transition-colors border ${isSelected
+                  ? "bg-[#6e5b49] text-white border-[#6e5b49]"
+                  : "bg-white text-[#4e453e] border-[#d1c4bb] hover:border-[#6e5b49]"
+                  }`}
               >
                 {note}
               </button>
@@ -180,7 +210,7 @@ function ProductForm({ onSuccess }) {
         <textarea
           name="description"
           value={product.description}
-          placeholder="Describe las características de la fragancia..."
+          placeholder="Describe las características del producto..."
           onChange={handleChange}
           rows="3"
           className="w-full bg-white border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm focus:border-[#6e5b49] outline-none transition-colors resize-none"

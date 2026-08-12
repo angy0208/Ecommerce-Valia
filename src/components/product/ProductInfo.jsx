@@ -10,11 +10,13 @@ function ProductInfo({ product }) {
       {/* Breadcrumb / Categoría */}
       <div className="flex items-center gap-2 mb-4">
         <span className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
-          Body Splash
-        </span>
-        <span className="text-gray-400 text-xs">/</span>
-        <span className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
           {product.category}
+        </span>
+
+        <span className="text-gray-400 text-xs">/</span>
+
+        <span className="text-xs uppercase tracking-widest text-gray-500 font-semibold">
+          {product.gender}
         </span>
       </div>
 
@@ -25,16 +27,30 @@ function ProductInfo({ product }) {
 
       {/* Subtítulo de marca */}
       <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-6 font-semibold">
-        VALÍA PREMIUM BODY SPLASH
+        VALÍA COLLECTION
       </p>
 
       {/* Precio y Disponibilidad */}
       <div className="flex items-end gap-4 mb-8">
         <span className="text-2xl md:text-3xl font-semibold text-[#1c1b1b]">
-          ${product.price}.00 USD
+          ${product.price.toFixed(2)} USD
         </span>
-        <span className="text-xs uppercase tracking-wider text-[#6e5b49] bg-[#c9b19c]/20 px-3 py-1 rounded-full border border-[#c9b19c]/30 mb-0.5 font-semibold">
-          Disponible
+        <span
+          className={`text-xs uppercase tracking-wider px-3 py-1 rounded-full border mb-0.5 font-semibold
+${product.available === false
+              ?
+              "text-red-600 bg-red-100 border-red-200"
+              :
+              "text-[#6e5b49] bg-[#c9b19c]/20 border-[#c9b19c]/30"
+            }`}
+        >
+          {
+            product.available === false
+              ?
+              "Agotado"
+              :
+              "Disponible"
+          }
         </span>
       </div>
 
@@ -44,21 +60,23 @@ function ProductInfo({ product }) {
           "Un aroma radiante diseñado para evocar una sensación de lujo tranquilo y sofisticación sin esfuerzo."}
       </p>
 
-      {/* Notas Olfativas */}
       <div className="mb-10">
         <h3 className="text-xs uppercase font-semibold text-[#1c1b1b] tracking-widest mb-4 border-b border-gray-200 pb-2">
-          Notas Olfativas
+          Características
         </h3>
         <div className="flex flex-wrap gap-3">
-          <div className="flex items-center gap-2 bg-[#f6f3f2] px-4 py-2 rounded-md border border-gray-200/60">
-            <span className="text-[#6e5b49] text-sm font-medium">🌸 Floral</span>
-          </div>
-          <div className="flex items-center gap-2 bg-[#f6f3f2] px-4 py-2 rounded-md border border-gray-200/60">
-            <span className="text-[#6e5b49] text-sm font-medium">🍰 Dulce</span>
-          </div>
-          <div className="flex items-center gap-2 bg-[#f6f3f2] px-4 py-2 rounded-md border border-gray-200/60">
-            <span className="text-[#6e5b49] text-sm font-medium">🌿 Frutal</span>
-          </div>
+          {
+            product.tags?.map(tag => (
+              <div
+                key={tag}
+                className="bg-[#f6f3f2] px-4 py-2 rounded-md border border-gray-200"
+              >
+                <span className="text-[#6e5b49] text-sm font-medium">
+                  {tag}
+                </span>
+              </div>
+            ))
+          }
         </div>
       </div>
 

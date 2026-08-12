@@ -18,11 +18,11 @@ function FeaturedProducts() {
           <div>
 
             <p className="uppercase tracking-[0.3em] text-sm text-gray-500">
-              Colección
+              Selección especial
             </p>
 
             <h2 className="text-5xl font-serif mt-3">
-              Más Vendidos
+              Productos destacados
             </h2>
 
           </div>

@@ -1,7 +1,7 @@
 import products from "../../data/products";
 import ProductCard from "./ProductCard";
 
-function ProductGrid({ search, category, sort }) {
+function ProductGrid({ search, category, gender, sort }) {
 
     let filtered = [...products];
 
