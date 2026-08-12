@@ -1,13 +1,7 @@
 import { useState } from "react";
 
-function ProductGallery({ images = [], name }) {
-  // Garantiza que siempre tengamos al menos un elemento para mostrar
-  const imageList = Array.isArray(images) && images.length > 0 
-    ? images 
-    : ["/assets/placeholder.jpg"];
-
-  // Estado para la imagen activa (por defecto la primera del array)
-  const [selectedImage, setSelectedImage] = useState(imageList[0]);
+function ProductGallery({ images, name }) {
+  const [selectedImage, setSelectedImage] = useState(images[0]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -23,22 +17,22 @@ function ProductGallery({ images = [], name }) {
       </div>
 
       {/* Tira de Miniaturas */}
-      {imageList.length > 1 && (
+      {images && images.length > 0 && (
         <div className="flex gap-4 mt-2">
-          {imageList.map((imgUrl, index) => (
+          {images.map((image, index) => (
             <button
               key={index}
-              onClick={() => setSelectedImage(imgUrl)}
+              onClick={() => setSelectedImage(image)}
               className={`w-20 aspect-square bg-white rounded-md overflow-hidden border relative shadow-sm transition-all duration-300 hover:opacity-80 ${
-                selectedImage === imgUrl
+                selectedImage === image
                   ? "border-[#6e5b49] ring-1 ring-[#6e5b49]"
-                  : "border-gray-200"
+                  : "border-gray-200 hover:border-[#c9b19c]"
               }`}
             >
               <div className="absolute inset-0 p-2 flex items-center justify-center">
                 <img
-                  src={imgUrl}
-                  alt={`${name} miniatura ${index + 1}`}
+                  src={image}
+                  alt={`${name} ${index + 1}`}
                   className="w-full h-full object-contain mix-blend-multiply"
                 />
               </div>

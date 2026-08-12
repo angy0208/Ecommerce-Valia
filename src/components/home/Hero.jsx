@@ -4,7 +4,7 @@ function Hero() {
     <section
       className="relative flex h-[820px] items-center justify-center overflow-hidden"
       style={{
-        backgroundImage: "url('/images/hero/hero.jpg')",
+        backgroundImage: "url('/images/hero/hero.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -24,7 +24,7 @@ function Hero() {
           to="/catalogo"
           className="inline-block bg-black text-white px-8 py-3 uppercase tracking-widest hover:bg-neutral-800 transition"
         >
-          Descubrir Aromas
+          Descubrir Nuestra Colección
         </Link>
         
 
