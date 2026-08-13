@@ -23,35 +23,28 @@ function Cart() {
     setCart(getCart());
   }
 
-  function increaseQty(id, currentQty) {
+  // Modificado para verificar el stock / disponibilidad antes de aumentar
+  function increaseQty(item) {
+    const isAvailable = item.available !== false;
 
-    updateQuantity(
-      id,
-      currentQty + 1
-    );
-
-    setCart(getCart());
-
-  }
-
-
-  function decreaseQty(id, currentQty) {
-
-    if (currentQty <= 1) {
-
-      deleteProduct(id);
-
+    if (!isAvailable) {
+      alert("Este producto está agotado.");
       return;
-
     }
 
-    updateQuantity(
-      id,
-      currentQty - 1
-    );
-
+    const currentQty = Number(item.quantity) || 1;
+    updateQuantity(item.id, currentQty + 1);
     setCart(getCart());
+  }
 
+  function decreaseQty(id, currentQty) {
+    if (currentQty <= 1) {
+      deleteProduct(id);
+      return;
+    }
+
+    updateQuantity(id, currentQty - 1);
+    setCart(getCart());
   }
 
   function finalizarPedido() {
@@ -85,6 +78,7 @@ function Cart() {
             cart.map((item) => {
               const itemPrice = Number(item.price) || 0;
               const itemQty = Number(item.quantity) || 1;
+              const isAvailable = item.available !== false;
 
               return (
                 <div
@@ -137,12 +131,29 @@ function Cart() {
                     </div>
 
                     <div className="flex justify-between items-end mt-4 sm:mt-0">
-                      {/* Controles de Cantidad con onClick activado */}
-                      <div className="flex items-center justify-center border border-gray-300 rounded-full px-3 py-1">
-                        <span className="text-sm font-medium">
+                      {/* Controles de Cantidad */}
+                      <div className="flex items-center border border-gray-300 rounded-full">
+                        <button
+                          type="button"
+                          onClick={() => decreaseQty(item.id, itemQty)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-l-full transition-colors font-medium"
+                        >
+                          -
+                        </button>
+                        <span className="w-8 text-center text-sm font-medium">
                           {itemQty}
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => increaseQty(item)}
+                          disabled={!isAvailable}
+                          title={!isAvailable ? "Producto agotado" : ""}
+                          className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-r-full transition-colors font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          +
+                        </button>
                       </div>
+
                       <div className="text-right">
                         <p className="text-base text-[#1c1b1b] font-semibold">
                           ${itemPrice * itemQty}.00 USD

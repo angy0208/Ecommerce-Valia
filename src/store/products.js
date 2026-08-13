@@ -11,14 +11,14 @@ export function getProducts() {
 
 }
 
-
+/* 
 function notifyProductsUpdated() {
 
   window.dispatchEvent(
     new Event("productsUpdated")
   );
 
-}
+} */
 
 
 export function saveProducts(products) {
@@ -28,7 +28,9 @@ export function saveProducts(products) {
     JSON.stringify(products)
   );
 
-  notifyProductsUpdated();
+  window.dispatchEvent(
+    new Event("productsUpdated")
+  );
 
 }
 
