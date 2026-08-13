@@ -2,13 +2,18 @@ function QuantitySelector({ quantity, setQuantity }) {
 
   return (
 
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-4">
 
       <button
 
-        onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+        type="button"
 
-        className="border px-4 py-2"
+        onClick={() =>
+          quantity > 1 &&
+          setQuantity(quantity - 1)
+        }
+
+        className="border px-4 py-2 hover:bg-gray-100 transition"
 
       >
 
@@ -16,17 +21,23 @@ function QuantitySelector({ quantity, setQuantity }) {
 
       </button>
 
-      <span className="text-xl">
+
+      <span className="text-xl min-w-[20px] text-center">
 
         {quantity}
 
       </span>
 
+
       <button
 
-        onClick={() => setQuantity(quantity + 1)}
+        type="button"
 
-        className="border px-4 py-2"
+        onClick={() =>
+          setQuantity(quantity + 1)
+        }
+
+        className="border px-4 py-2 hover:bg-gray-100 transition"
 
       >
 
@@ -40,4 +51,4 @@ function QuantitySelector({ quantity, setQuantity }) {
 
 }
 
-export default QuantitySelector;;
+export default QuantitySelector;

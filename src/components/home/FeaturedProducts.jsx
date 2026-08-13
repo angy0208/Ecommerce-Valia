@@ -1,11 +1,40 @@
-import products from "../../data/products";
+import { useEffect, useState } from "react";
+import { getProducts } from "../../store/products";
 import ProductCard from "../product/ProductCard";
 
 function FeaturedProducts() {
 
+  const [products, setProducts] = useState([]);
+
+  function loadProducts() {
+    setProducts(getProducts());
+  }
+
+  useEffect(() => {
+
+    loadProducts();
+
+    window.addEventListener(
+      "productsUpdated",
+      loadProducts
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "productsUpdated",
+        loadProducts
+      );
+
+    };
+
+  }, []);
+
+
   const featured = products.filter(
     product => product.featured
   );
+
 
   return (
 
@@ -28,6 +57,7 @@ function FeaturedProducts() {
           </div>
 
         </div>
+
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
 

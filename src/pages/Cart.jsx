@@ -23,35 +23,35 @@ function Cart() {
     setCart(getCart());
   }
 
-  // Función para aumentar la cantidad de un producto
   function increaseQty(id, currentQty) {
-    const newQty = currentQty + 1;
-    if (typeof updateQuantity === "function") {
-      updateQuantity(id, newQty);
-    }
-    // Actualizar directamente el estado visual del carrito
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.id === id ? { ...item, quantity: newQty } : item
-      )
+
+    updateQuantity(
+      id,
+      currentQty + 1
     );
+
+    setCart(getCart());
+
   }
 
-  // Función para disminuir la cantidad de un producto
+
   function decreaseQty(id, currentQty) {
+
     if (currentQty <= 1) {
+
       deleteProduct(id);
+
       return;
+
     }
-    const newQty = currentQty - 1;
-    if (typeof updateQuantity === "function") {
-      updateQuantity(id, newQty);
-    }
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.id === id ? { ...item, quantity: newQty } : item
-      )
+
+    updateQuantity(
+      id,
+      currentQty - 1
     );
+
+    setCart(getCart());
+
   }
 
   function finalizarPedido() {
@@ -138,22 +138,10 @@ function Cart() {
 
                     <div className="flex justify-between items-end mt-4 sm:mt-0">
                       {/* Controles de Cantidad con onClick activado */}
-                      <div className="flex items-center border border-gray-300 rounded-full">
-                        <button
-                          onClick={() => decreaseQty(item.id, itemQty)}
-                          className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-l-full transition-colors font-medium"
-                        >
-                          -
-                        </button>
-                        <span className="w-8 text-center text-sm font-medium">
+                      <div className="flex items-center justify-center border border-gray-300 rounded-full px-3 py-1">
+                        <span className="text-sm font-medium">
                           {itemQty}
                         </span>
-                        <button
-                          onClick={() => increaseQty(item.id, itemQty)}
-                          className="w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-r-full transition-colors font-medium"
-                        >
-                          +
-                        </button>
                       </div>
                       <div className="text-right">
                         <p className="text-base text-[#1c1b1b] font-semibold">

@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-
 function ProductCard({ product }) {
 
+  const available = product.available !== false;
 
   return (
 
@@ -14,9 +14,7 @@ function ProductCard({ product }) {
 
     >
 
-
-      <div className="overflow-hidden">
-
+      <div className="overflow-hidden relative">
 
         <img
 
@@ -24,47 +22,44 @@ function ProductCard({ product }) {
 
           alt={product.name}
 
-          className="h-[420px] w-full object-cover transition duration-700 group-hover:scale-110"
+          className={`h-[420px] w-full object-cover transition duration-700 group-hover:scale-110 ${
+            !available ? "opacity-70" : ""
+          }`}
 
         />
 
+        {!available && (
+
+          <span className="absolute top-4 left-4 bg-black text-white text-xs uppercase tracking-wider px-3 py-2">
+
+            Agotado
+
+          </span>
+
+        )}
 
       </div>
 
 
-
       <div className="mt-5">
-
 
         {/* Categoría y género */}
 
         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-gray-500">
 
-
           <p>
-
             {product.category}
-
           </p>
-
 
           <span>
-
             •
-
           </span>
 
-
           <p>
-
             {product.gender}
-
           </p>
 
-
         </div>
-
-
 
 
         <h3 className="mt-2 text-2xl font-serif">
@@ -74,101 +69,33 @@ function ProductCard({ product }) {
         </h3>
 
 
-
-
-
-        {/* Características */}
-
-        <div className="flex flex-wrap gap-2 mt-3">
-
-
-          {
-
-            product.tags?.map(tag => (
-
-
-              <span
-
-                key={tag}
-
-                className="text-xs bg-[#f6f3f2] px-3 py-1 rounded-full"
-
-              >
-
-
-                {tag}
-
-
-              </span>
-
-
-            ))
-
-
-          }
-
-
-        </div>
-
-
-
-
         <p className="mt-3 text-lg font-medium">
 
-          ${product.price}
+          ${Number(product.price).toFixed(2)}
 
         </p>
-
-
-
 
 
         <p
-
-          className={`text-sm mt-2 ${product.available === false
-
-              ?
-
-              "text-red-500"
-
-              :
-
-              "text-green-600"
-
-            }`}
-
+          className={`text-sm mt-2 ${
+            !available
+              ? "text-red-500"
+              : "text-green-600"
+          }`}
         >
 
-
-          {
-
-            product.available === false
-
-              ?
-
-              "Agotado"
-
-              :
-
-              "Disponible"
-
+          {available
+            ? "Disponible"
+            : "Agotado"
           }
-
 
         </p>
 
-
-
       </div>
-
 
     </Link>
 
-
   );
-
-
 }
-
 
 export default ProductCard;

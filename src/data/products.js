@@ -1,138 +1,174 @@
 const products = [
 
-{
-    id:1,
+  {
+    id: 1,
 
-    name:"Sweet Vanilla",
+    name: "Sweet Vanilla",
 
-    category:"Perfumes",
+    category: "Perfumes",
 
-    gender:"Femenino",
+    gender: "Femenino",
 
-    price:15,
+    price: 15,
 
-    image:"/images/products/product1.png",
+    image: "/images/products/product1.png",
 
-    images:[
-        "/images/products/product1.png",
-        "/images/products/product1.1.jpg",
-        "/images/products/product1.2.jpg"
+    images: [
+      "/images/products/product1.png",
+      "/images/products/product1.1.jpg",
+      "/images/products/product1.2.jpg"
     ],
 
-    featured:true,
+    featured: true,
 
-    tags:[
-        "Dulce",
-        "Vainilla",
-        "Elegante"
+    tags: [
+      "Dulce",
+      "Vainilla",
+      "Elegante"
     ],
 
-    description:
-    "Una fragancia envolvente y cálida con notas dulces que transmiten elegancia y personalidad.",
-
-    available:true
-},
-
-
-
-{
-    id:2,
-
-    name:"Bolso Minimalista",
-
-    category:"Accesorios",
-
-    gender:"Femenino",
-
-    price:35,
-
-    image:"/images/products/product2.png",
-
-    images:[
-        "/images/products/product2.png"
-    ],
-
-    featured:true,
-
-    tags:[
-        "Moderno",
-        "Casual",
-        "Versátil"
+    attributes: [
+      {
+        name: "Contenido",
+        value: "50 ml"
+      },
+      {
+        name: "Tipo",
+        value: "Eau de Parfum"
+      }
     ],
 
     description:
-    "Bolso diseñado para complementar cualquier estilo con un acabado sofisticado.",
+      "Una fragancia envolvente y cálida con notas dulces que transmiten elegancia y personalidad.",
 
-    available:true
-},
+    available: true
+  },
 
 
+  {
+    id: 2,
 
-{
-    id:3,
+    name: "Bolso Minimalista",
 
-    name:"Gloss Nude",
+    category: "Accesorios",
 
-    category:"Maquillaje",
+    gender: "Femenino",
 
-    gender:"Femenino",
+    price: 35,
 
-    price:12,
+    image: "/images/products/product2.png",
 
-    image:"/images/products/product3.png",
-
-    images:[
-        "/images/products/product3.png"
+    images: [
+      "/images/products/product2.png"
     ],
 
-    featured:true,
+    featured: true,
 
-    tags:[
-        "Brillante",
-        "Natural",
-        "Ligero"
+    tags: [
+      "Moderno",
+      "Casual",
+      "Versátil"
     ],
 
-    description:
-    "Gloss de acabado brillante ideal para un look natural y elegante.",
-
-    available:true
-},
-
-
-
-{
-    id:4,
-
-    name:"Perfume Ocean",
-
-    category:"Perfumes",
-
-    gender:"Masculino",
-
-    price:18,
-
-    image:"/images/products/product4.png",
-
-    images:[
-        "/images/products/product4.png"
-    ],
-
-    featured:true,
-
-    tags:[
-        "Fresco",
-        "Elegante",
-        "Intenso"
+    attributes: [
+      {
+        name: "Material",
+        value: "Cuero sintético"
+      }
     ],
 
     description:
-    "Fragancia fresca con carácter masculino y una esencia sofisticada.",
+      "Bolso diseñado para complementar cualquier estilo con un acabado sofisticado.",
 
-    available:true
-}
+    available: true
+  },
+
+
+  {
+    id: 3,
+
+    name: "Gloss Nude",
+
+    category: "Maquillaje",
+
+    gender: "Femenino",
+
+    price: 12,
+
+    image: "/images/products/product3.png",
+
+    images: [
+      "/images/products/product3.png"
+    ],
+
+    featured: true,
+
+    tags: [
+      "Brillante",
+      "Natural",
+      "Ligero"
+    ],
+
+    attributes: [
+      {
+        name: "Tono",
+        value: "Nude"
+      },
+      {
+        name: "Acabado",
+        value: "Brillante"
+      }
+    ],
+
+    description:
+      "Gloss de acabado brillante ideal para un look natural y elegante.",
+
+    available: true
+  },
+
+
+  {
+    id: 4,
+
+    name: "Perfume Ocean",
+
+    category: "Perfumes",
+
+    gender: "Masculino",
+
+    price: 18,
+
+    image: "/images/products/product4.png",
+
+    images: [
+      "/images/products/product4.png"
+    ],
+
+    featured: true,
+
+    tags: [
+      "Fresco",
+      "Elegante",
+      "Intenso"
+    ],
+
+    attributes: [
+      {
+        name: "Contenido",
+        value: "100 ml"
+      },
+      {
+        name: "Tipo",
+        value: "Eau de Toilette"
+      }
+    ],
+
+    description:
+      "Fragancia fresca con carácter masculino y una esencia sofisticada.",
+
+    available: true
+  }
 
 ];
-
 
 export default products;

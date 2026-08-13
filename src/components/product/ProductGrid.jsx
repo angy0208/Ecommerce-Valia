@@ -1,7 +1,30 @@
-import products from "../../data/products";
+import { useEffect, useState } from "react";
+import { getProducts } from "../../store/products";
 import ProductCard from "./ProductCard";
 
 function ProductGrid({ search, category, gender, sort }) {
+
+  const [products, setProducts] = useState([]);
+
+  function loadProducts() {
+    setProducts(getProducts());
+  }
+
+  useEffect(() => {
+    loadProducts();
+
+    window.addEventListener(
+      "productsUpdated",
+      loadProducts
+    );
+
+    return () => {
+      window.removeEventListener(
+        "productsUpdated",
+        loadProducts
+      );
+    };
+  }, []);
 
   let filtered = [...products];
 
@@ -23,7 +46,9 @@ function ProductGrid({ search, category, gender, sort }) {
   if (search) {
     filtered = filtered.filter(
       product =>
-        product.name.toLowerCase().includes(search.toLowerCase())
+        product.name
+          ?.toLowerCase()
+          .includes(search.toLowerCase())
     );
   }
 
@@ -31,11 +56,15 @@ function ProductGrid({ search, category, gender, sort }) {
   switch (sort) {
 
     case "low":
-      filtered.sort((a, b) => a.price - b.price);
+      filtered.sort(
+        (a, b) => Number(a.price) - Number(b.price)
+      );
       break;
 
     case "high":
-      filtered.sort((a, b) => b.price - a.price);
+      filtered.sort(
+        (a, b) => Number(b.price) - Number(a.price)
+      );
       break;
 
     case "az":
