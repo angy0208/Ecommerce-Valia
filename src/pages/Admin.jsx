@@ -34,7 +34,7 @@ function Admin() {
 
 
         </div>
-        </div>
+      </div>
     </section>
 
   )
