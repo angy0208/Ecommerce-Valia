@@ -7,7 +7,7 @@ function OurStory() {
           {/* Columna de Texto */}
           <div className="lg:col-span-6 flex flex-col items-start order-2 lg:order-1">
             <span className="text-xs font-semibold tracking-[0.25em] text-[#b78a65] uppercase mb-3">
-              Desde el Atelier
+              El Universo VALÍA
             </span>
             
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#2d2d2d] leading-tight mb-6">
@@ -15,31 +15,31 @@ function OurStory() {
             </h2>
 
             <p className="font-serif italic text-xl text-[#6e5b49] border-l-2 border-[#b78a65] pl-4 mb-6 leading-relaxed">
-              "VALÍA surge como un homenaje a la individualidad y al lujo silencioso."
+              "VALÍA nace para reunir en un solo lugar la armonía entre lo que vistes, la belleza que proyectas y el aroma que dejas al pasar."
             </p>
 
             <div className="space-y-4 text-gray-600 font-light leading-relaxed text-base">
               <p>
-                Nacida de la búsqueda de la pureza y la sofisticación, empezamos en un pequeño atelier con la visión de crear brumas corporales que no solo perfumen, sino que envuelvan, transformen y eleven el aura personal de quien las lleva.
+                Lo que comenzó como un proyecto enfocado en la perfumería y el cuidado personal evolucionó en una experiencia de estilo integral. Entendimos que la elegancia no es un solo elemento, sino la suma de pequeños detalles.
               </p>
               <p>
-                Cada gota es el resultado de una meticulosa selección botánica y un proceso artesanal que respeta los tiempos de la naturaleza, logrando una estela sutil pero inolvidable.
+                Hoy reunimos una curaduría que abarca ropa, accesorios, maquillaje y body splashes inspirados en grandes fragancias, pensados para acompañar el ritmo de la mujer contemporánea con frescura, calidad y personalidad.
               </p>
             </div>
 
             {/* Métrica / Badge editorial */}
             <div className="mt-8 pt-6 border-t border-[#E5DDD3] w-full flex items-center gap-8">
               <div>
-                <span className="block font-serif text-2xl text-[#2d2d2d]">100%</span>
+                <span className="block font-serif text-2xl text-[#2d2d2d]">Integral</span>
                 <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">
-                  Extractos Botánicos
+                  Moda & Perfumería
                 </span>
               </div>
               <div className="h-8 w-px bg-[#E5DDD3]" />
               <div>
-                <span className="block font-serif text-2xl text-[#2d2d2d]">Artisanal</span>
+                <span className="block font-serif text-2xl text-[#2d2d2d]">Curada</span>
                 <span className="text-xs uppercase tracking-wider text-gray-500 font-medium">
-                  Proceso Meticuloso
+                  Selección Exclusiva
                 </span>
               </div>
             </div>
@@ -55,8 +55,8 @@ function OurStory() {
               {/* Contenedor principal de la imagen */}
               <div className="relative aspect-[4/5] bg-[#F8F5F1] rounded-sm overflow-hidden shadow-lg group">
                 <img
-                  src="/images/nosotros/nosotros1.jpg"
-                  alt="VALÍA Premium Body Splash Atelier"
+                  src="/images/nosotros/nosotros.jpg"
+                  alt="VALÍA Lifestyle Store"
                   className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-105"
                 />
                 

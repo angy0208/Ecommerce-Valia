@@ -1,3 +1,4 @@
+
 export function getCart() {
 
   return JSON.parse(
@@ -19,11 +20,15 @@ export function saveCart(cart) {
 
 export function addToCart(product, quantity = 1) {
 
-  if (product.available === false) {
+  if (
+    product.available === false ||
+    Number(product.stock) <= 0
+  ) {
 
-    alert("Este producto está agotado.");
-
-    return;
+    return {
+      success: false,
+      message: "Este producto está agotado.",
+    };
 
   }
 
@@ -35,6 +40,9 @@ export function addToCart(product, quantity = 1) {
 
   const stock = Number(product.stock);
 
+  let limited = false;
+  let message = "";
+
   if (existing) {
 
     let newQuantity =
@@ -45,13 +53,19 @@ export function addToCart(product, quantity = 1) {
 
       newQuantity = stock;
 
-      alert(
-        `Solo hay ${stock} unidades disponibles.`
-      );
+      limited = true;
+
+      message =
+        `Solo hay ${stock} unidades disponibles.`;
 
     }
 
     existing.quantity = newQuantity;
+
+    existing.stock = product.stock;
+    existing.available = product.available;
+    existing.price = product.price;
+    existing.image = product.image;
 
   } else {
 
@@ -60,6 +74,11 @@ export function addToCart(product, quantity = 1) {
     if (stock > 0 && newQuantity > stock) {
 
       newQuantity = stock;
+
+      limited = true;
+
+      message =
+        `Solo hay ${stock} unidades disponibles.`;
 
     }
 
@@ -78,6 +97,12 @@ export function addToCart(product, quantity = 1) {
   window.dispatchEvent(
     new Event("cartUpdated")
   );
+
+  return {
+    success: true,
+    limited,
+    message,
+  };
 
 }
 
@@ -105,11 +130,19 @@ export function updateQuantity(id, quantity) {
     item => item.id === id
   );
 
-  if (!product) return;
+  if (!product) {
+    return {
+      success: false,
+      message: "Producto no encontrado.",
+    };
+  }
 
   const stock = Number(product.stock);
 
   let newQuantity = Number(quantity);
+
+  let limited = false;
+  let message = "";
 
   if (newQuantity < 1) {
 
@@ -117,9 +150,17 @@ export function updateQuantity(id, quantity) {
 
   }
 
-  if (stock > 0 && newQuantity > stock) {
+  if (
+    stock > 0 &&
+    newQuantity > stock
+  ) {
 
     newQuantity = stock;
+
+    limited = true;
+
+    message =
+      `Solo hay ${stock} unidades disponibles.`;
 
   }
 
@@ -130,5 +171,11 @@ export function updateQuantity(id, quantity) {
   window.dispatchEvent(
     new Event("cartUpdated")
   );
+
+  return {
+    success: true,
+    limited,
+    message,
+  };
 
 }

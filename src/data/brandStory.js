@@ -1,9 +1,9 @@
 const brandStory = [
   {
     id: 1,
-    title: "Un Sello Inolvidable",
+    title: "Tu Esencia y Estilo Integral",
     description:
-      "En VALÍA creamos body splashes que van más allá de un aroma superficial. Formulamos brumas sofisticadas con fijación prolongada que abrazan tu piel suavemente, convirtiendo tu perfume en tu firma personal.",
+      "En VALÍA creemos que tu imagen es una experiencia completa. Curamos colecciones de ropa, accesorios, maquillaje y body splashes que se combinan entre sí para proyectar tu mejor versión cada día.",
     button: "Explorar la colección",
     ruta: "/catalogo",
     image: "/images/about/about1.jpg",
@@ -11,9 +11,9 @@ const brandStory = [
   },
   {
     id: 2,
-    title: "Frescura Sensorial Diaria",
+    title: "Elegancia en Cada Detalle",
     description:
-      "Diseñados para aplicarse generosamente tras la ducha o para renovar tu energía durante la jornada. Cada gota ofrece una experiencia refrescante, sutil y llena de elegancia.",
+      "Desde el toque de un accesorio clave y el maquillaje perfecto, hasta la frescura sutil de nuestras brumas corporales. Cada pieza de nuestro universo está pensada para acompañar tu rutina con elegancia y personalidad.",
     button: "Conoce el universo VALÍA",
     ruta: "/nosotros",
     image: "/images/about/about2.jpg",
@@ -21,9 +21,9 @@ const brandStory = [
   },
   {
     id: 3,
-    title: "Notas para Cada Actitud",
+    title: "Diseñado para Tu Actitud",
     description:
-      "Desde dulzuras atalcadas hasta cítricos vibrantes y notas florales silvestres. Nuestra colección se adapta a cada personalidad.",
+      "Outfits versátiles, detalles que marcan tendencia y notas aromáticas que van desde lo dulce hasta lo cítrico. Todo lo que necesitas para construir un look con sello propio.",
     button: "Encuentra tu aroma ideal",
     ruta: "/catalogo",
     image: "/images/about/about3.jpg",

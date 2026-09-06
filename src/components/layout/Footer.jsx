@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, MessageCircle, CreditCard, Landmark } from "lucide-react";
-import { FaInstagram, FaFacebook } from "react-icons/fa";
+import { FaInstagram, FaTiktok } from "react-icons/fa";
 
 function Footer() {
   return (
@@ -16,10 +16,10 @@ function Footer() {
               VALÍA
             </h2>
             <p className="text-gray-600 text-sm leading-relaxed mb-4">
-              Body Splash inspirados en las mejores fragancias. Elegancia, frescura y personalidad en cada aplicación.
+              Desde ropa y accesorios que definen tu outfit, hasta perfumes e indispensables de maquillaje inspirados en las mejores tendencias. Elegancia, frescura y personalidad en cada detalle.
             </p>
             <p className="text-xs text-gray-500">
-              © {new Date().getFullYear()} VALÍA Premium Body Splash.
+              © {new Date().getFullYear()} VALÍA Premium.
             </p>
           </div>
 
@@ -60,7 +60,7 @@ function Footer() {
             <ul className="space-y-3 text-sm text-gray-600">
               <li className="flex items-center gap-2">
                 <MapPin size={16} className="text-[#b78a65] shrink-0" />
-                <span>Av. Principal 123, Ciudad</span>
+                <span> Av. Francisco Salias, San Antonio de Los Altos 1204, Miranda</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={16} className="text-[#b78a65] shrink-0" />
@@ -70,8 +70,8 @@ function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="text-[#b78a65] shrink-0" />
-                <a href="tel:+5491112345678" className="hover:text-black transition-colors">
-                  +54 9 11 1234-5678
+                <a href="tel:+584241537446" className="hover:text-black transition-colors">
+                  +58 424 1537446
                 </a>
               </li>
             </ul>
@@ -105,8 +105,8 @@ function Footer() {
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#b78a65] transition-colors">
                 <FaInstagram size={20} />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#b78a65] transition-colors">
-                <FaFacebook size={20} />
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#b78a65] transition-colors">
+                <FaTiktok size={20} />
               </a>
             </div>
           </div>

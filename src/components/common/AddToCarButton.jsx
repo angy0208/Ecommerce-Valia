@@ -1,48 +1,77 @@
+import { useState } from "react";
 import { addToCart } from "../../store/cart";
+import Toast from "../common/Toast";
 
 function AddToCartButton({ product, quantity }) {
+  const [toast, setToast] = useState(null);
 
-  const available = product.available !== false;
+  const stock = Number(product.stock) || 0;
+  const available = stock > 0;
 
   function handleClick() {
 
     if (!available) {
+      setToast({
+        message: "Este producto está agotado.",
+        type: "error"
+      });
+      return;
+    }
 
-      alert("Este producto está agotado.");
+    const result = addToCart(product, quantity);
+
+    if (!result.success) {
+
+      setToast({
+        message: result.message,
+        type: "error"
+      });
 
       return;
 
     }
 
-    addToCart(product, quantity);
+    if (result.limited) {
 
-    alert("Producto agregado al carrito");
+      setToast({
+        message: result.message,
+        type: "error"
+      });
 
+      return;
+
+    }
+
+    setToast({
+      message: "Producto agregado al carrito.",
+      type: "success"
+    });
   }
 
   return (
+    <>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={!available}
+        className="w-full bg-black text-white py-4 uppercase tracking-[0.2em] hover:bg-neutral-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
 
-    <button
+        {available
+          ? "Agregar al carrito"
+          : "Producto agotado"
+        }
 
-      type="button"
-
-      onClick={handleClick}
-
-      disabled={!available}
-
-      className="w-full bg-black text-white py-4 uppercase tracking-[0.2em] hover:bg-neutral-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-
-    >
-
-      {available
-        ? "Agregar al carrito"
-        : "Producto agotado"
-      }
-
-    </button>
-
+      </button>
+    </>
   );
-
 }
 
 export default AddToCartButton;

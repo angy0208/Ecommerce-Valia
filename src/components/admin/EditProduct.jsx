@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Upload, Plus } from "lucide-react";
-import { updateProduct } from "../../store/products";
+import {
+  updateProduct as updateProductAPI,
+  deleteProductImage,
+  getParentProducts
+} from "../../services/productService";
+import Toast from "../common/Toast";
 
 const TAG_OPTIONS = [
   "Elegante",
@@ -15,9 +20,20 @@ const TAG_OPTIONS = [
 ];
 
 function EditProduct({ product, close }) {
+  const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [parentProducts, setParentProducts] = useState([]);
 
   const [formData, setFormData] = useState({
     ...product,
+
+    parent_id: product.parent_id || "",
+
+    image:
+      product.image ||
+      (product.images && product.images.length > 0
+        ? product.images[0]
+        : null),
 
     gender: product.gender || "Femenino",
 
@@ -29,10 +45,38 @@ function EditProduct({ product, close }) {
       product.images ||
       (product.image ? [product.image] : []),
 
+    newImages: [],
+    newImageFiles: [],
+
+    mainNewImageIndex: null,
+
     description: product.description || "",
 
     attributes: product.attributes || [],
+
   });
+
+  useEffect(() => {
+    async function loadParents() {
+      try {
+        const data = await getParentProducts();
+
+        // Filtramos para que el producto actual no aparezca como su propio padre
+        const availableParents = data.filter(
+          (item) => item.id !== product.id
+        );
+
+        setParentProducts(availableParents);
+      } catch (error) {
+        console.error(
+          "ERROR CARGANDO PRODUCTOS PADRE:",
+          error
+        );
+      }
+    }
+
+    loadParents();
+  }, [product.id]);
 
 
   function handleChange(e) {
@@ -131,229 +175,290 @@ function EditProduct({ product, close }) {
 
     const files = Array.from(e.target.files);
 
-    if (files.length === 0) return;
+    if (files.length === 0) {
+      return;
+    }
 
-    const newImages = files
-      .slice(0, 3)
-      .map((file) => URL.createObjectURL(file));
-
-    setFormData((prev) => ({
-      ...prev,
-      images: newImages,
-    }));
-
-  }
-
-
-  function removeImage(index) {
+    const previews = files.map((file) =>
+      URL.createObjectURL(file)
+    );
 
     setFormData((prev) => ({
       ...prev,
 
-      images: prev.images.filter(
-        (_, i) => i !== index
-      ),
+      newImages: [
+        ...prev.newImages,
+        ...previews
+      ],
+
+      newImageFiles: [
+        ...prev.newImageFiles,
+        ...files
+      ]
+    }));
+
+    e.target.value = "";
+  }
+
+  function setMainExistingImage(image) {
+
+    setFormData((prev) => ({
+      ...prev,
+
+      image: image,
+
+      mainNewImageIndex: null
     }));
 
   }
 
+  function setMainNewImage(index) {
+
+    setFormData((prev) => ({
+      ...prev,
+
+      image: prev.newImages[index],
+
+      mainNewImageIndex: index
+    }));
+
+  }
+
+  async function deleteExistingImage(image) {
+
+    try {
+
+      const filename =
+        image.split("/").pop();
+
+      await deleteProductImage(
+        product.id,
+        filename
+      );
+
+      setFormData(prev => ({
+
+        ...prev,
+
+        images:
+          prev.images.filter(
+            item => item !== image
+          )
+
+      }));
+
+      setToast({
+        message: "Imagen eliminada correctamente.",
+        type: "success"
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Error eliminando imagen:",
+        error
+      );
+
+      setToast({
+        message:
+          error.message ||
+          "No se pudo eliminar la imagen.",
+        type: "error"
+      });
+
+    }
+
+  }
+
+  function removeNewImage(index) {
+
+    setFormData((prev) => {
+
+      let newMainIndex = prev.mainNewImageIndex;
+
+      if (index === prev.mainNewImageIndex) {
+        newMainIndex = null;
+      } else if (
+        prev.mainNewImageIndex !== null &&
+        index < prev.mainNewImageIndex
+      ) {
+        newMainIndex--;
+      }
+
+      return {
+        ...prev,
+
+        newImages: prev.newImages.filter(
+          (_, i) => i !== index
+        ),
+
+        newImageFiles: prev.newImageFiles.filter(
+          (_, i) => i !== index
+        ),
+
+        mainNewImageIndex: newMainIndex
+      };
+
+    });
+
+  }
 
   // =========================
   // GUARDAR CAMBIOS
   // =========================
 
-  function handleSubmit(e) {
-
+  async function handleSubmit(e) {
     e.preventDefault();
+    console.log("BOTON GUARDAR PRESIONADO");
+    setLoading(true);
+    try {
 
-    const stockNum = Number(formData.stock);
+      const stockNum =
+        Number(formData.stock);
 
-    const images = formData.images || [];
 
-    const cleanAttributes =
-      formData.attributes.filter(
-        (attribute) =>
-          attribute.name.trim() !== "" &&
-          attribute.value.trim() !== ""
+      const cleanAttributes =
+        formData.attributes.filter(
+          (attribute) =>
+            attribute.name.trim() !== "" &&
+            attribute.value.trim() !== ""
+        );
+      const productData = {
+        name: formData.name,
+        category: formData.category,
+        gender: formData.gender,
+        price: formData.price,
+        stock: stockNum,
+        description: formData.description,
+        tags: formData.tags,
+        attributes: cleanAttributes,
+        featured: formData.featured ?? false,
+        parent_id:
+          formData.parent_id || null,
+
+        mainImage: formData.image,
+
+        mainImageNewIndex:
+          formData.mainNewImageIndex,
+      };
+
+      console.log(
+        "ACTUALIZANDO PRODUCTO:",
+        product.id
       );
 
 
-    updateProduct({
-
-      ...formData,
-
-      id: product.id,
-
-      image: images[0] || "",
-
-      images: images,
-
-      price: Number(formData.price),
-
-      stock: stockNum,
-
-      available: stockNum > 0,
-
-      attributes: cleanAttributes,
-
-    });
+      const updatedProduct =
+        await updateProductAPI(
+          product.id,
+          productData,
+          formData.newImageFiles
+        );
 
 
-    alert("Producto actualizado correctamente.");
+      console.log(
+        "PRODUCTO ACTUALIZADO:",
+        updatedProduct
+      );
 
-    close();
+
+      setToast({
+        message:
+          "Producto actualizado correctamente.",
+        type: "success"
+      });
+
+
+      setTimeout(() => {
+
+        close();
+
+      }, 1500);
+
+
+    } catch (error) {
+
+      console.error(
+        "ERROR AL ACTUALIZAR PRODUCTO:",
+        error
+      );
+
+
+      setToast({
+        message:
+          error.message ||
+          "No se pudo actualizar el producto.",
+        type: "error"
+      });
+
+    } finally {
+      setLoading(true);
+    }
 
   }
 
-
   return (
+    <>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
 
-      <div className="bg-[#fcf9f8] w-full max-w-2xl max-h-[90vh] rounded-xl shadow-2xl overflow-y-auto">
+        <div className="bg-[#fcf9f8] w-full max-w-2xl max-h-[90vh] rounded-xl shadow-2xl overflow-y-auto">
 
 
-        {/* HEADER */}
+          {/* HEADER */}
 
-        <div className="flex justify-between items-center p-6 border-b border-[#e5e2e1]">
+          <div className="flex justify-between items-center p-6 border-b border-[#e5e2e1]">
 
-          <div>
+            <div>
 
-            <h3 className="font-serif text-xl text-[#1c1b1b]">
-              Editar Producto
-            </h3>
+              <h3 className="font-serif text-xl text-[#1c1b1b]">
+                Editar Producto
+              </h3>
 
-            <p className="text-xs text-[#7f756d] mt-1">
-              Modifica la información del producto.
-            </p>
+              <p className="text-xs text-[#7f756d] mt-1">
+                Modifica la información del producto.
+              </p>
+
+            </div>
+
+
+            <button
+              type="button"
+              onClick={close}
+              className="text-[#7f756d] hover:text-[#1c1b1b]"
+            >
+
+              <X size={20} />
+
+            </button>
 
           </div>
 
 
-          <button
-            type="button"
-            onClick={close}
-            className="text-[#7f756d] hover:text-[#1c1b1b]"
+          <form
+            onSubmit={handleSubmit}
+            className="p-6 flex flex-col gap-5"
           >
 
-            <X size={20} />
 
-          </button>
-
-        </div>
-
-
-        <form
-          onSubmit={handleSubmit}
-          className="p-6 flex flex-col gap-5"
-        >
-
-
-          {/* NOMBRE */}
-
-          <div>
-
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-              Nombre del Producto
-            </label>
-
-            <input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
-            />
-
-          </div>
-
-
-          {/* GÉNERO / CATEGORÍA */}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* NOMBRE */}
 
             <div>
 
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-                Género
-              </label>
-
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
-              >
-
-                <option value="Femenino">
-                  Femenino
-                </option>
-
-                <option value="Masculino">
-                  Masculino
-                </option>
-
-                <option value="Unisex">
-                  Unisex
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div>
-
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-                Categoría
-              </label>
-
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
-              >
-
-                <option value="Perfumes">
-                  Perfumes
-                </option>
-
-                <option value="Ropa">
-                  Ropa
-                </option>
-
-                <option value="Accesorios">
-                  Accesorios
-                </option>
-
-                <option value="Maquillaje">
-                  Maquillaje
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-
-          {/* PRECIO / STOCK */}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-            <div>
-
-              <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-                Precio ($)
+                Nombre del Producto
               </label>
 
               <input
-                type="number"
-                step="0.01"
-                min="0"
-                name="price"
-                value={formData.price}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 required
                 className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
@@ -361,247 +466,253 @@ function EditProduct({ product, close }) {
 
             </div>
 
-
+            {/* PRODUCTO PADRE */}
             <div>
-
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-                Stock
+                Producto padre
               </label>
-
-              <input
-                type="number"
-                min="0"
-                name="stock"
-                value={formData.stock ?? 0}
-                onChange={handleChange}
-                required
-                className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
-              />
-
+              <select
+                name="parent_id"
+                value={formData.parent_id || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    parent_id: e.target.value ? Number(e.target.value) : null
+                  })
+                }
+                className="w-full bg-white border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm focus:border-[#6e5b49] outline-none"
+              >
+                <option value="">
+                  Ninguno (producto principal)
+                </option>
+                {parentProducts
+                  .filter((parent) => parent.id !== formData.id) // Evita que el producto sea padre de sí mismo
+                  .map((parent) => (
+                    <option
+                      key={parent.id}
+                      value={parent.id}
+                    >
+                      {parent.name}
+                    </option>
+                  ))}
+              </select>
+              <p className="text-xs text-[#7f756d] mt-2">
+                Selecciona un producto padre si este producto será una variante.
+              </p>
             </div>
 
-          </div>
 
+            {/* GÉNERO / CATEGORÍA */}
 
-          {/* ATRIBUTOS */}
-
-          <div>
-
-            <div className="flex items-center justify-between mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
               <div>
 
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e]">
-                  Atributos del producto
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+                  Género
                 </label>
 
-                <p className="text-xs text-[#7f756d] mt-1">
-                  Talla, ml, color, material, acabado, etc.
-                </p>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
+                >
+
+                  <option value="Femenino">
+                    Femenino
+                  </option>
+
+                  <option value="Masculino">
+                    Masculino
+                  </option>
+
+                  <option value="Unisex">
+                    Unisex
+                  </option>
+
+                </select>
 
               </div>
 
 
-              <button
-                type="button"
-                onClick={addAttribute}
-                className="flex items-center gap-1.5 text-xs font-medium text-[#6e5b49] hover:text-[#313030]"
-              >
+              <div>
 
-                <Plus size={15} />
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+                  Categoría
+                </label>
 
-                Agregar
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
+                >
 
-              </button>
+                  <option value="Perfumes">
+                    Perfumes
+                  </option>
+
+                  <option value="Ropa">
+                    Ropa
+                  </option>
+
+                  <option value="Accesorios">
+                    Accesorios
+                  </option>
+
+                  <option value="Maquillaje">
+                    Maquillaje
+                  </option>
+
+                </select>
+
+              </div>
 
             </div>
 
 
-            {formData.attributes.length === 0 && (
+            {/* PRECIO / STOCK */}
 
-              <div className="border border-dashed border-[#d1c4bb] rounded-lg p-4 text-center bg-white">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                <p className="text-xs text-[#7f756d]">
-                  No hay atributos agregados.
-                </p>
+              <div>
+
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+                  Precio ($)
+                </label>
+
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
+                />
 
               </div>
 
-            )}
+
+              <div>
+
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+                  Stock
+                </label>
+
+                <input
+                  type="number"
+                  min="0"
+                  name="stock"
+                  value={formData.stock ?? 0}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none"
+                />
+
+              </div>
+
+            </div>
 
 
-            <div className="flex flex-col gap-3">
+            {/* ATRIBUTOS */}
 
-              {formData.attributes.map(
-                (attribute, index) => (
+            <div>
 
-                  <div
-                    key={index}
-                    className="flex gap-2 items-center"
-                  >
+              <div className="flex items-center justify-between mb-2">
 
-                    <input
-                      type="text"
-                      placeholder="Ej. Talla"
-                      value={attribute.name}
-                      onChange={(e) =>
-                        updateAttribute(
-                          index,
-                          "name",
-                          e.target.value
-                        )
-                      }
-                      className="flex-1 bg-white border border-[#d1c4bb] rounded-lg px-3 py-2.5 text-sm outline-none focus:border-[#6e5b49]"
-                    />
+                <div>
+
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e]">
+                    Atributos del producto
+                  </label>
+
+                  <p className="text-xs text-[#7f756d] mt-1">
+                    Talla, ml, color, material, acabado, etc.
+                  </p>
+
+                </div>
 
 
-                    <input
-                      type="text"
-                      placeholder="Ej. M"
-                      value={attribute.value}
-                      onChange={(e) =>
-                        updateAttribute(
-                          index,
-                          "value",
-                          e.target.value
-                        )
-                      }
-                      className="flex-1 bg-white border border-[#d1c4bb] rounded-lg px-3 py-2.5 text-sm outline-none focus:border-[#6e5b49]"
-                    />
+                <button
+                  type="button"
+                  onClick={addAttribute}
+                  className="flex items-center gap-1.5 text-xs font-medium text-[#6e5b49] hover:text-[#313030]"
+                >
+
+                  <Plus size={15} />
+
+                  Agregar
+
+                </button>
+
+              </div>
 
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        removeAttribute(index)
-                      }
-                      className="p-2 text-[#7f756d] hover:text-red-500"
-                    >
+              {formData.attributes.length === 0 && (
 
-                      <X size={17} />
+                <div className="border border-dashed border-[#d1c4bb] rounded-lg p-4 text-center bg-white">
 
-                    </button>
+                  <p className="text-xs text-[#7f756d]">
+                    No hay atributos agregados.
+                  </p>
 
-                  </div>
+                </div>
 
-                )
               )}
 
-            </div>
 
-          </div>
+              <div className="flex flex-col gap-3">
 
-
-          {/* CARACTERÍSTICAS */}
-
-          <div>
-
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-              Características
-            </label>
-
-            <div className="flex flex-wrap gap-2">
-
-              {TAG_OPTIONS.map((tag) => {
-
-                const isSelected =
-                  formData.tags.includes(tag);
-
-                return (
-
-                  <button
-                    type="button"
-                    key={tag}
-                    onClick={() =>
-                      handleTagToggle(tag)
-                    }
-                    className={`px-3 py-1.5 rounded-full text-xs transition-colors border ${
-                      isSelected
-                        ? "bg-[#6e5b49] text-white border-[#6e5b49]"
-                        : "bg-white text-[#4e453e] border-[#d1c4bb] hover:border-[#6e5b49]"
-                    }`}
-                  >
-
-                    {tag}
-
-                  </button>
-
-                );
-
-              })}
-
-            </div>
-
-          </div>
-
-
-          {/* IMÁGENES */}
-
-          <div>
-
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-              Imágenes del Producto
-            </label>
-
-            <p className="text-xs text-[#7f756d] mb-3">
-              Máximo 3 imágenes. La primera será la principal.
-            </p>
-
-
-            <label className="cursor-pointer bg-[#e9e1df] hover:bg-[#c9b19c] text-[#1c1b1b] text-xs px-4 py-2.5 rounded-md flex items-center justify-center gap-2 w-fit">
-
-              <Upload size={14} />
-
-              Seleccionar imágenes
-
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleImageChange}
-              />
-
-            </label>
-
-
-            {formData.images.length > 0 && (
-
-              <div className="grid grid-cols-3 gap-3 mt-4">
-
-                {formData.images.map(
-                  (image, index) => (
+                {formData.attributes.map(
+                  (attribute, index) => (
 
                     <div
                       key={index}
-                      className="relative aspect-square rounded-lg overflow-hidden border border-[#d1c4bb] bg-white"
+                      className="flex gap-2 items-center"
                     >
 
-                      <img
-                        src={image}
-                        alt={`Imagen ${index + 1}`}
-                        className="w-full h-full object-cover"
+                      <input
+                        type="text"
+                        placeholder="Ej. Talla"
+                        value={attribute.name}
+                        onChange={(e) =>
+                          updateAttribute(
+                            index,
+                            "name",
+                            e.target.value
+                          )
+                        }
+                        className="flex-1 bg-white border border-[#d1c4bb] rounded-lg px-3 py-2.5 text-sm outline-none focus:border-[#6e5b49]"
                       />
 
 
-                      {index === 0 && (
-
-                        <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] text-center py-1">
-                          Principal
-                        </span>
-
-                      )}
+                      <input
+                        type="text"
+                        placeholder="Ej. M"
+                        value={attribute.value}
+                        onChange={(e) =>
+                          updateAttribute(
+                            index,
+                            "value",
+                            e.target.value
+                          )
+                        }
+                        className="flex-1 bg-white border border-[#d1c4bb] rounded-lg px-3 py-2.5 text-sm outline-none focus:border-[#6e5b49]"
+                      />
 
 
                       <button
                         type="button"
                         onClick={() =>
-                          removeImage(index)
+                          removeAttribute(index)
                         }
-                        className="absolute top-2 right-2 bg-white/90 text-red-500 rounded-full p-1"
+                        className="p-2 text-[#7f756d] hover:text-red-500"
                       >
 
-                        <X size={14} />
+                        <X size={17} />
 
                       </button>
 
@@ -612,59 +723,266 @@ function EditProduct({ product, close }) {
 
               </div>
 
-            )}
-
-          </div>
+            </div>
 
 
-          {/* DESCRIPCIÓN */}
+            {/* CARACTERÍSTICAS */}
 
-          <div>
+            <div>
 
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
-              Descripción
-            </label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+                Características
+              </label>
 
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows="4"
-              placeholder="Describe las características del producto..."
-              className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none resize-none"
-            />
+              <div className="flex flex-wrap gap-2">
 
-          </div>
+                {TAG_OPTIONS.map((tag) => {
+
+                  const isSelected =
+                    formData.tags.includes(tag);
+
+                  return (
+
+                    <button
+                      type="button"
+                      key={tag}
+                      onClick={() =>
+                        handleTagToggle(tag)
+                      }
+                      className={`px-3 py-1.5 rounded-full text-xs transition-colors border ${isSelected
+                        ? "bg-[#6e5b49] text-white border-[#6e5b49]"
+                        : "bg-white text-[#4e453e] border-[#d1c4bb] hover:border-[#6e5b49]"
+                        }`}
+                    >
+
+                      {tag}
+
+                    </button>
+
+                  );
+
+                })}
+
+              </div>
+
+            </div>
 
 
-          {/* BOTONES */}
+            {/* IMÁGENES */}
 
-          <div className="flex gap-3 pt-2">
+            <div>
 
-            <button
-              type="button"
-              onClick={close}
-              className="flex-1 border border-[#d1c4bb] text-[#4e453e] py-3 rounded-lg text-xs uppercase tracking-wider font-medium hover:bg-[#e9e1df]"
-            >
-              Cancelar
-            </button>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+                Imágenes del Producto
+              </label>
+
+              <p className="text-xs text-[#7f756d] mb-3">
+                Máximo 3 imágenes. La primera será la principal.
+              </p>
 
 
-            <button
-              type="submit"
-              className="flex-1 bg-[#6e5b49] text-white py-3 rounded-lg text-xs uppercase tracking-wider font-medium hover:bg-[#313030]"
-            >
-              Guardar Cambios
-            </button>
+              <label className="cursor-pointer bg-[#e9e1df] hover:bg-[#c9b19c] text-[#1c1b1b] text-xs px-4 py-2.5 rounded-md flex items-center justify-center gap-2 w-fit">
 
-          </div>
+                <Upload size={14} />
 
-        </form>
+                Seleccionar imágenes
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+
+              </label>
+
+
+              {formData.images.length > 0 && (
+
+                <div className="mt-4">
+
+                  <p className="text-xs font-semibold text-[#4e453e] mb-3">
+                    Imágenes actuales
+                  </p>
+
+
+                  <div className="grid grid-cols-3 gap-3">
+
+                    {formData.images.map(
+                      (image, index) => (
+
+                        <div
+                          key={index}
+                          className="relative aspect-square rounded-lg overflow-hidden border border-[#d1c4bb] bg-white"
+                        >
+
+                          <img
+                            src={image}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+
+
+                          {formData.image === image && (
+
+                            <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] text-center py-1">
+                              Principal
+                            </span>
+
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              deleteExistingImage(image)
+                            }
+                            className="absolute top-2 right-2 bg-white/90 text-red-500 rounded-full p-1"
+                          >
+
+                            <X size={14} />
+
+                          </button>
+
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setMainExistingImage(image)
+                            }
+                            className="absolute bottom-2 left-2 bg-white/90 text-[#6e5b49] text-[10px] px-2 py-1 rounded"
+                          >
+                            Principal
+                          </button>
+
+
+                        </div>
+
+                      )
+                    )}
+
+                  </div>
+
+                </div>
+
+              )}
+
+              {formData.newImages.length > 0 && (
+
+                <div className="mt-5">
+
+                  <p className="text-xs font-semibold text-[#4e453e] mb-3">
+                    Nuevas imágenes
+                  </p>
+
+
+                  <div className="grid grid-cols-3 gap-3">
+
+                    {formData.newImages.map(
+                      (image, index) => (
+
+                        <div
+                          key={index}
+                          className={`relative aspect-square rounded-lg overflow-hidden border-2 bg-white ${formData.mainNewImageIndex === index
+                            ? "border-[#6e5b49] shadow-md"
+                            : "border-[#d1c4bb]"
+                            }`}
+                        >
+
+                          <img
+                            src={image}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+
+                          {formData.mainNewImageIndex === index && (
+                            <span className="absolute bottom-0 left-0 right-0 bg-[#6e5b49]/90 text-white text-[10px] text-center py-1">
+                              Principal
+                            </span>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              removeNewImage(index)
+                            }
+                            className="absolute top-2 right-2 bg-white/90 text-red-500 rounded-full p-1"
+                          >
+                            <X size={14} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setMainNewImage(index)
+                            }
+                            className="absolute bottom-2 left-2 bg-white/90 text-[#6e5b49] text-[10px] px-2 py-1 rounded"
+                          >
+                            Principal
+                          </button>
+
+                        </div>
+
+                      )
+                    )}
+
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {/* DESCRIPCIÓN */}
+
+              <div>
+
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#4e453e] mb-2">
+                  Descripción
+                </label>
+
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="4"
+                  placeholder="Describe las características del producto..."
+                  className="w-full border border-[#d1c4bb] rounded-lg px-4 py-2.5 text-sm bg-white focus:border-[#6e5b49] outline-none resize-none"
+                />
+
+              </div>
+
+
+              {/* BOTONES */}
+
+              <div className="flex gap-3 pt-2">
+
+                <button
+                  type="button"
+                  onClick={close}
+                  className="flex-1 border border-[#d1c4bb] text-[#4e453e] py-3 rounded-lg text-xs uppercase tracking-wider font-medium hover:bg-[#e9e1df]"
+                >
+                  Cancelar
+                </button>
+
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 bg-[#6e5b49] text-white py-3 rounded-lg text-xs uppercase tracking-wider font-medium hover:bg-[#313030] disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Guardando..." : "Guardar Cambios"}
+                </button>
+
+              </div>
+            </div>
+          </form>
+
+        </div>
 
       </div>
-
-    </div>
-
+    </>
   );
 }
 

@@ -4,7 +4,7 @@ function Hero() {
     <section
       className="relative flex h-[820px] items-center justify-center overflow-hidden"
       style={{
-        backgroundImage: "url('/images/hero/hero.png')",
+        backgroundImage: "url('/images/hero/hero1.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

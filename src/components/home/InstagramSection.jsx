@@ -16,11 +16,11 @@ function InstagramSection() {
         {/* Encabezado con buen espaciado inferior respecto a las fotos */}
         <div className="text-center mb-16 flex flex-col items-center gap-3">
           <h2 className="text-4xl md:text-5xl font-serif text-[#2d2d2d] tracking-tight">
-            Síguenos en Instagram
+            Síguenos en TikTok
           </h2>
           
           <a
-            href="https://instagram.com"
+            href="https://tiktok.com"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block text-xs uppercase tracking-[0.2em] font-semibold text-[#b78a65] hover:text-[#2d2d2d] transition-colors"

@@ -26,27 +26,42 @@ function Categories() {
 
 
   const categories = [
-
     {
       name: "Perfumes",
       image: "/images/categories/perfumes.jpg",
+      colors: [
+        "#e8b4b8",
+        "#d6b98c",
+        "#f3d9c8"
+      ]
     },
-
     {
       name: "Ropa",
       image: "/images/categories/ropa.jpg",
+      colors: [
+        "#111111",
+        "#ffffff",
+        "#9ca3af"
+      ]
     },
-
     {
       name: "Accesorios",
       image: "/images/categories/accesorios.jpg",
+      colors: [
+        "#d4af37",
+        "#c0c0c0",
+        "#8b5e3c"
+      ]
     },
-
     {
       name: "Maquillaje",
       image: "/images/categories/maquillaje.jpg",
+      colors: [
+        "#f9a8d4",
+        "#fb7185",
+        "#d97706"
+      ]
     }
-
   ];
 
 
@@ -105,16 +120,29 @@ function Categories() {
 
                   <div className="mt-5 text-center">
 
-
                     <h3 className="font-serif text-3xl">
-
                       {item.name}
-
                     </h3>
 
 
-                  </div>
+                    <div className="flex justify-center gap-2 mt-3">
 
+                      {item.colors?.map((color, index) => (
+
+                        <span
+                          key={index}
+                          className="w-5 h-5 rounded-full border border-gray-300"
+                          style={{
+                            backgroundColor: color
+                          }}
+                        />
+
+                      ))}
+
+                    </div>
+
+
+                  </div>
 
                 </Link>
 

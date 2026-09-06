@@ -1,24 +1,59 @@
 import { useEffect, useState } from "react";
 import { Search, Edit2, Trash2 } from "lucide-react";
 import {
-  getProducts,
   deleteProduct,
   updateProduct,
-} from "../../store/products";
+  getProducts,
+} from "../../services/productService";
+
 import EditProduct from "./EditProduct";
+import Toast from "../common/Toast";
 
 function AdminProductTable() {
   const [products, setProducts] = useState([]);
   const [selected, setSelected] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [toast, setToast] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
-  function load() {
-    setProducts(getProducts());
+  async function load() {
+
+    try {
+
+      const data = await getProducts();
+
+      setProducts(data);
+
+    } catch (error) {
+
+      console.error(
+        "Error al cargar productos:",
+        error
+      );
+
+    }
+
   }
 
   useEffect(() => {
+    let cancelled = false;
 
-    load();
+    async function initialLoad() {
+      try {
+        const data = await getProducts();
+
+        if (!cancelled) {
+          setProducts(data);
+        }
+      } catch (error) {
+        console.error(
+          "Error al cargar productos:",
+          error
+        );
+      }
+    }
+
+    initialLoad();
 
     window.addEventListener(
       "productsUpdated",
@@ -26,36 +61,97 @@ function AdminProductTable() {
     );
 
     return () => {
+      cancelled = true;
 
       window.removeEventListener(
         "productsUpdated",
         load
       );
-
     };
-
   }, []);
 
-  function remove(id) {
-    if (window.confirm("¿Estás seguro de eliminar este producto?")) {
-      deleteProduct(id);
-      load();
+  async function remove(id) {
+    if (deletingId) return;
+    if (
+      !window.confirm(
+        "¿Estás seguro de eliminar este producto?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+      setDeletingId(id);
+      await deleteProduct(id);
+
+      setToast({
+        message: "Producto eliminado correctamente.",
+        type: "success"
+      });
+
+      await load();
+
+    } catch (error) {
+
+      console.error(
+        "Error al eliminar producto:",
+        error
+      );
+
+      setToast({
+        message: "No se pudo eliminar el producto.",
+        type: "error"
+      });
+
+    } finally {
+
+      setDeletingId(null);
+
     }
   }
 
   // Actualizar stock directamente desde la tabla
-  function handleStockChange(product, newStock) {
-    const stockNumber = Math.max(0, Number(newStock));
+  async function handleStockChange(
+    product,
+    newStock
+  ) {
+
+    const stockNumber =
+      Math.max(0, Number(newStock));
 
     const updated = {
+
       ...product,
+
       stock: stockNumber,
+
       available: stockNumber > 0,
+
     };
 
-    updateProduct(updated);
+    try {
 
-    load();
+      await updateProduct(
+        product.id,
+        updated
+      );
+
+      await load();
+
+    } catch (error) {
+
+      console.error(
+        "Error al actualizar stock:",
+        error
+      );
+
+      setToast({
+        message: "No se pudo actualizar el stock.",
+        type: "error"
+      });
+
+    }
+
   }
 
   // Buscar por nombre, categoría o género
@@ -71,9 +167,17 @@ function AdminProductTable() {
 
   return (
     <div className="w-full">
+      {toast && (
+        <Toast  
+
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
       {/* Buscador */}
-      <div className="p-4 bg-white border-b border-[#e5e2e1] flex justify-between items-center">
+      <div className="p-4 border-b border-[#e5e2e1] flex justify-between items-center">
 
         <div className="relative w-full max-w-sm">
 
@@ -313,12 +417,11 @@ function AdminProductTable() {
 
                       <button
                         onClick={() => remove(product.id)}
+                        disabled={deletingId === product.id}
                         title="Eliminar producto"
-                        className="p-2 text-[#7f756d] hover:text-[#ba1a1a] hover:bg-red-50 rounded-full transition-colors"
+                        className="p-2 text-[#7f756d] hover:text-[#ba1a1a] hover:bg-red-50 rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                       >
-
                         <Trash2 size={16} />
-
                       </button>
 
                     </div>

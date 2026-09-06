@@ -3,7 +3,7 @@ function TermsSidebar() {
     { id: "uso-sitio", label: "Uso del Sitio" },
     { id: "propiedad", label: "Propiedad Intelectual" },
     { id: "envios", label: "Políticas de Envío" },
-    { id: "devoluciones", label: "Devoluciones" },
+    { id: "devoluciones", label: "Cambios y Devoluciones" },
     { id: "privacidad", label: "Privacidad" },
   ];
 

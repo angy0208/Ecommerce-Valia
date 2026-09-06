@@ -6,10 +6,10 @@ function AboutHero() {
           Nuestra Filosofía
         </span>
         <h1 className="font-serif text-4xl md:text-6xl text-[#2d2d2d] mb-6 max-w-4xl tracking-tight">
-          La esencia de tu presencia.
+          Estilo, belleza y presencia en un solo lugar.
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-light">
-          Elevando lo cotidiano a extraordinario a través de fragancias cuidadosamente curadas y un diseño atemporal.
+          Elevando tu día a día a través de una selección pensada de ropa, accesorios, maquillaje y fragancias diseñadas para expresar tu auténtica esencia.
         </p>
       </div>
     </section>

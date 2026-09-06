@@ -1,4 +1,4 @@
-import { Sparkles, FlaskConical, Shirt } from "lucide-react";
+import { Sparkles, Palette, Shirt } from "lucide-react";
 
 function OurMission() {
   return (
@@ -10,7 +10,7 @@ function OurMission() {
             Nuestra Misión
           </h2>
           <p className="text-gray-600 text-lg font-light leading-relaxed">
-            Inspirar momentos de conexión profunda con uno mismo a través del poder evocador del aroma.
+            Inspirar confianza y autenticidad ofreciéndote piezas y detalles de belleza que completan tu estilo de vida.
           </p>
         </div>
 
@@ -18,37 +18,37 @@ function OurMission() {
           
           <div className="bg-white rounded-sm p-10 flex flex-col items-center text-center shadow-sm border border-[#E5DDD3] hover:border-[#b78a65] transition-colors duration-300">
             <div className="w-14 h-14 rounded-full bg-[#F8F5F1] flex items-center justify-center text-[#b78a65] mb-6">
-              <Sparkles size={26} />
-            </div>
-            <h3 className="font-semibold text-xs uppercase tracking-widest text-[#2d2d2d] mb-3">
-              Ingredientes Nobles
-            </h3>
-            <p className="text-gray-600 font-light leading-relaxed text-sm">
-              Seleccionamos cuidadosamente extractos botánicos de primera calidad, priorizando fuentes sostenibles y éticas para asegurar la pureza en cada frasco.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-sm p-10 flex flex-col items-center text-center shadow-sm border border-[#E5DDD3] hover:border-[#b78a65] transition-colors duration-300">
-            <div className="w-14 h-14 rounded-full bg-[#F8F5F1] flex items-center justify-center text-[#b78a65] mb-6">
-              <FlaskConical size={26} />
-            </div>
-            <h3 className="font-semibold text-xs uppercase tracking-widest text-[#2d2d2d] mb-3">
-              Alquimia Moderna
-            </h3>
-            <p className="text-gray-600 font-light leading-relaxed text-sm">
-              Combinamos técnicas tradicionales de perfumería con innovación contemporánea para crear brumas ligeras que perduran sutilmente en la piel.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-sm p-10 flex flex-col items-center text-center shadow-sm border border-[#E5DDD3] hover:border-[#b78a65] transition-colors duration-300">
-            <div className="w-14 h-14 rounded-full bg-[#F8F5F1] flex items-center justify-center text-[#b78a65] mb-6">
               <Shirt size={26} />
             </div>
             <h3 className="font-semibold text-xs uppercase tracking-widest text-[#2d2d2d] mb-3">
-              Lujo Minimalista
+              Moda & Versatilidad
             </h3>
             <p className="text-gray-600 font-light leading-relaxed text-sm">
-              Creemos en el poder de la sencillez. Nuestros envases reflejan una estética depurada, diseñada para ser un objeto de deseo en cualquier espacio.
+              Curamos prendas y accesorios atemporales diseñados para acompañarte en cualquier ocasión, combinando comodidad, elegancia y tendencia.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-sm p-10 flex flex-col items-center text-center shadow-sm border border-[#E5DDD3] hover:border-[#b78a65] transition-colors duration-300">
+            <div className="w-14 h-14 rounded-full bg-[#F8F5F1] flex items-center justify-center text-[#b78a65] mb-6">
+              <Palette size={26} />
+            </div>
+            <h3 className="font-semibold text-xs uppercase tracking-widest text-[#2d2d2d] mb-3">
+              Belleza & Expresión
+            </h3>
+            <p className="text-gray-600 font-light leading-relaxed text-sm">
+              Seleccionamos indispensables de maquillaje que realzan tu belleza natural con acabados frescos, ligeros e impecables.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-sm p-10 flex flex-col items-center text-center shadow-sm border border-[#E5DDD3] hover:border-[#b78a65] transition-colors duration-300">
+            <div className="w-14 h-14 rounded-full bg-[#F8F5F1] flex items-center justify-center text-[#b78a65] mb-6">
+              <Sparkles size={26} />
+            </div>
+            <h3 className="font-semibold text-xs uppercase tracking-widest text-[#2d2d2d] mb-3">
+              Sello Aromático
+            </h3>
+            <p className="text-gray-600 font-light leading-relaxed text-sm">
+              Nuestros Body Splash e inspiraciones de alta perfumería ofrecen esa estela de frescura y sofisticación que se convierte en tu firma personal.
             </p>
           </div>
 
